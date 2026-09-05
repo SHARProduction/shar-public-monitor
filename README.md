@@ -1,6 +1,8 @@
-# SHAR public monitor
+# SHAR Production public monitor
 
-Independent, public, black-box monitoring of https://sharprod.com and https://mcp.sharprod.com/public. Node 24 built-ins only; no package install, production source, private knowledge snapshot, credentials, build, crawl, or deployment access.
+Open-source black-box monitoring software for the public [SHAR Production](https://sharprod.com/) website and public MCP endpoint at https://mcp.sharprod.com/public. It uses Node 24 built-ins only; it needs no package install, production source, private knowledge snapshot, credentials, build, crawl, or deployment access.
+
+This repository defines checks and a GitHub Actions schedule. It does not by itself prove that a scheduled workflow is enabled, running, successful, or delivering notifications. Confirm current status from public workflow runs and endpoint observations. [Русская документация](README.ru.md).
 
 The original stabilization light monitor is reused in `scripts/engine.mjs`; its ten fixed requests retain their twelve-attempt transport ceiling. `scripts/monitor.mjs` extends these observations and adds a fixed discovery/RPC checklist.
 
@@ -23,7 +25,7 @@ node scripts/monitor.mjs full
 
 Workflow **SHAR public monitor**, file `public-monitor.yml`, dispatch input `mode`: `fast`, `full`, `fixture-failure`, `fixture-recovery`. Default schedules never select fixtures. Fixtures make no endpoint requests and use separate incident/state markers with an explicit TEST body. For local fixture output only, set `MONITOR_LOCAL_FIXTURE=1`.
 
-Fast schedule: minutes 7, 22, 37, 52 every UTC hour. Full schedule: 03:43 UTC daily. GitHub schedule delivery can be delayed; only an actual `schedule` event proves scheduled execution. Public repositories may have schedules disabled after inactivity; check Actions operational status.
+Configured fast schedule: minutes 7, 22, 37, 52 every UTC hour. Configured full schedule: 03:43 UTC daily. GitHub schedule delivery can be delayed; only an actual `schedule` event proves scheduled execution. Public repositories may have schedules disabled after inactivity; check Actions operational status.
 
 ## Incidents and state
 
@@ -33,6 +35,10 @@ A fast success cannot close a full-only failed check it did not exercise. Such i
 
 A separate **SHAR PUBLIC MONITOR STATE** issue preserves last known good and run status across clean runners. Its body is updated without repeated comments. A separate TEST state issue serves fixtures. Before the first observed success, last known good is explicitly unknown. The workflow serializes runs; reports remain as public artifacts for 30 days. Issue listing is bounded to 2,000 entries and fails visibly rather than losing dedup state.
 
-The check job has only contents-read. The alert job adds issues-write using the repository `GITHUB_TOKEN`; no PAT or external secrets. No pull-request trigger. Official checkout/setup-node/upload-artifact/download-artifact actions are pinned to commits verified against their official GitHub v4 tag refs on 2026-09-05. Checkout does not persist credentials.
+The check job has only contents-read. The alert job adds issues-write using the repository `GITHUB_TOKEN`; no PAT or external secrets. No pull-request trigger. Checkout, setup-node, upload-artifact and download-artifact use exact commit pins annotated with their intended v4 major version. Review these pins against upstream release information before updating them. Checkout does not persist credentials.
 
 Infrastructure failures before report creation remain failed workflow runs and may prevent an issue notification. GitHub Issues notification delivery also depends on repository watch/subscription settings. This monitor does not prove owner-console, deployment, private analytics, or runtime-image provenance that public endpoints do not expose.
+
+## License and publisher
+
+Copyright © 2026 **SHAR Production**. Code and documentation are available under the [MIT License](LICENSE). Canonical website: [https://sharprod.com/](https://sharprod.com/).

@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import { CONTRACT, boundedBody, collect, REQUESTS, deduplicate } from '../scripts/engine.mjs';
 import { PROTOCOL, rpcOptions, payload, checkCall, checkCache, fixture } from '../scripts/monitor.mjs';
 import { reconcile, marker, TITLE } from '../scripts/alert.mjs';
+import { readFile } from 'node:fs/promises';
+
+test('public package metadata identifies SHAR Production and MIT',async()=>{
+ const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+ assert.equal(pkg.author,'SHAR Production (https://sharprod.com/)');
+ assert.equal(pkg.homepage,'https://sharprod.com/');
+ assert.equal(pkg.license,'MIT');
+ assert.match(await readFile(new URL('../LICENSE',import.meta.url),'utf8'),/^MIT License/);
+});
 
 test('modern RPC headers and metadata match public contract',()=>{
  const options=rpcOptions('tools/call',{name:'list_services',arguments:{}},'list_services');
